@@ -25,8 +25,13 @@ public class UserController {
 			throws JsonMappingException, JsonProcessingException {
 		ObjectMapper userMapper = new ObjectMapper();
 		User user = userMapper.readValue(userJson, User.class);
-		UserService.registerUser(user);
-		return new ResponseEntity<>("The user has been registered", HttpStatus.OK);
+		String invalidatorMessage = UserService.registerUser(user);
+		if(invalidatorMessage != "") {
+			return new ResponseEntity<>("The user has NOT been registered ! "+invalidatorMessage, HttpStatus.BAD_REQUEST);
+		}else {
+			return new ResponseEntity<>("The user has been registered", HttpStatus.OK);
+		}
+
 	}
 
 	@GetMapping(value = "/get/{id}")

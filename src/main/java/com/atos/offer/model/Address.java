@@ -1,5 +1,8 @@
 package com.atos.offer.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class Address {
 
 	private String street;
@@ -27,6 +30,7 @@ public class Address {
 		this.street = street;
 	}
 
+	@Pattern(regexp = "[0-9]{5}", message = "The zipCode should be 5 digits")
 	public String getZipCode() {
 		return zipCode;
 	}
@@ -43,6 +47,8 @@ public class Address {
 		this.city = city;
 	}
 
+	@NotNull
+	@Pattern(regexp = "(?i)france", message = "You must live in France to create an account")
 	public String getCountry() {
 		return country;
 	}

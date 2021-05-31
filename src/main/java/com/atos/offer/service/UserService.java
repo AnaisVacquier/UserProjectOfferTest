@@ -1,6 +1,12 @@
 package com.atos.offer.service;
 
 import java.util.ArrayList;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -36,23 +42,39 @@ public class UserService {
 	 * 
 	 * @param user
 	 */
-	public static void registerUser(User user) {
+	public static String registerUser(User user) {
 
 		MongoCollection<Document> userCollection = getUserCollection();
 
-		Document address = new Document("street", user.getAddress().getStreet())
-				.append("zipCode", user.getAddress().getZipCode()).append("city", user.getAddress().getCity())
-				.append("country", user.getAddress().getCountry());
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+		String invalidatorMessage = "";
 
-		Document document = new Document();
-		document.append("firstName", user.getFirstName());
-		document.append("lastName", user.getLastName());
-		document.append("age", user.getAge());
-		document.append("email", user.getEmail());
-		document.append("phoneNumber", user.getPhoneNumber());
-		document.append("address", address);
+		if (constraintViolations.size() > 0) {
+			invalidatorMessage = invalidatorMessage.concat("The following fields aren't correct : ");
+			for (ConstraintViolation<User> contraintes : constraintViolations) {
+				invalidatorMessage = invalidatorMessage
+						.concat(contraintes.getPropertyPath() + " : " + contraintes.getMessage() + ". ");
+			}
+		} else {
+			Document address = new Document("street", user.getAddress().getStreet())
+					.append("zipCode", user.getAddress().getZipCode()).append("city", user.getAddress().getCity())
+					.append("country", user.getAddress().getCountry());
 
-		userCollection.insertOne(document);
+			Document document = new Document();
+			document.append("firstName", user.getFirstName());
+			document.append("lastName", user.getLastName());
+			document.append("age", user.getAge());
+			document.append("email", user.getEmail());
+			document.append("phoneNumber", user.getPhoneNumber());
+			document.append("address", address);
+
+			userCollection.insertOne(document);
+		}
+
+		return invalidatorMessage;
+
 	}
 
 	/**

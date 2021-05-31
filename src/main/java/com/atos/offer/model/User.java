@@ -1,5 +1,11 @@
 package com.atos.offer.model;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class User {
 
 	private String firstName;
@@ -23,6 +29,8 @@ public class User {
 		this.address = address;
 	}
 
+	@NotNull
+	@NotEmpty
 	public String getFirstName() {
 		return firstName;
 	}
@@ -31,6 +39,8 @@ public class User {
 		this.firstName = firstName;
 	}
 
+	@NotNull
+	@NotEmpty
 	public String getLastName() {
 		return lastName;
 	}
@@ -39,6 +49,8 @@ public class User {
 		this.lastName = lastName;
 	}
 
+	@NotNull
+	@Min(value = 18, message = "You must be older than 18yo to register")
 	public Integer getAge() {
 		return age;
 	}
@@ -47,6 +59,7 @@ public class User {
 		this.age = age;
 	}
 
+	@Pattern(regexp = "^[\\w\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "The mail format is not valid")
 	public String getEmail() {
 		return email;
 	}
@@ -55,6 +68,7 @@ public class User {
 		this.email = email;
 	}
 
+	@Pattern(regexp = "[0-9]{10}", message = "The phone number should be 10 digits")
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -63,6 +77,8 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@NotNull
+	@Valid
 	public Address getAddress() {
 		return address;
 	}
