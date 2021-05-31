@@ -15,7 +15,7 @@ public class MongoDBConnection {
 	}
 	
 	/**
-	 * this function sets the mongoDB connection as a singleton
+	 * this function sets the mogoDB connection as a singleton
 	 * @return the unique mongoDB connection instance
 	 */
 	public static MongoDBConnection getInstance() {
