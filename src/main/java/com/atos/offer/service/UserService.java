@@ -1,5 +1,6 @@
 package com.atos.offer.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import com.atos.offer.database.MongoDBConnection;
+import com.atos.offer.log.LogManager;
 import com.atos.offer.model.User;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -54,8 +56,9 @@ public class UserService {
 	 * Function to register a user
 	 * 
 	 * @param user
+	 * @throws IOException
 	 */
-	public static String registerUser(User user) {
+	public static String registerUser(User user) throws IOException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 
@@ -88,7 +91,8 @@ public class UserService {
 		}
 
 		watch.stop();
-		System.out.println("registerUser | Time Elapsed: " + watch.getTime());
+		LogManager.writeLogs("registerUser | Time Elapsed: " + watch.getTime());
+
 		return invalidatorMessage;
 
 	}
@@ -99,8 +103,9 @@ public class UserService {
 	 * @param id the mongoDB id
 	 * @return
 	 * @return
+	 * @throws IOException
 	 */
-	public static String getUser(String id) {
+	public static String getUser(String id) throws IOException {
 		StopWatch watch = new StopWatch();
 		watch.start();
 
@@ -126,7 +131,7 @@ public class UserService {
 		}
 
 		watch.stop();
-		System.out.println("getUser | Time Elapsed: " + watch.getTime());
+		LogManager.writeLogs("getUser | Time Elapsed: " + watch.getTime());
 		return userToReturn;
 
 	}

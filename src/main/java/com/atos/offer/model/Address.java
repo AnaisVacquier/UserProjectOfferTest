@@ -18,12 +18,12 @@ public class Address {
 		super();
 		this.street = street;
 		this.zipCode = zipCode;
-		
-		if(this.city == "")
+
+		if (this.city == "")
 			this.city = "Paris";
 		else
 			this.city = city;
-		
+
 		this.country = country;
 	}
 
@@ -41,7 +41,7 @@ public class Address {
 	}
 
 	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode ;
+		this.zipCode = zipCode;
 	}
 
 	public String getCity() {
