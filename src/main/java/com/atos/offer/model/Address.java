@@ -18,12 +18,7 @@ public class Address {
 		super();
 		this.street = street;
 		this.zipCode = zipCode;
-
-		if (this.city == "")
-			this.city = "Paris";
-		else
-			this.city = city;
-
+		this.city = city;
 		this.country = country;
 	}
 
@@ -45,6 +40,8 @@ public class Address {
 	}
 
 	public String getCity() {
+		if (this.city == "" || this.city == null)
+			this.city = "Paris";
 		return city;
 	}
 
