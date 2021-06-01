@@ -8,8 +8,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -38,17 +38,30 @@ public class UserService {
 	}
 
 	/**
+	 * Function to check whether the user parameters are valid
+	 * 
+	 * @param user
+	 * @return the violations found
+	 */
+	public static Set<ConstraintViolation<User>> checkValidators(User user) {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+		return constraintViolations;
+	}
+
+	/**
 	 * Function to register a user
 	 * 
 	 * @param user
 	 */
 	public static String registerUser(User user) {
+		StopWatch watch = new StopWatch();
+		watch.start();
 
 		MongoCollection<Document> userCollection = getUserCollection();
 
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+		Set<ConstraintViolation<User>> constraintViolations = checkValidators(user);
 		String invalidatorMessage = "";
 
 		if (constraintViolations.size() > 0) {
@@ -59,7 +72,8 @@ public class UserService {
 			}
 		} else {
 			Document address = new Document("street", user.getAddress().getStreet())
-					.append("zipCode", user.getAddress().getZipCode()).append("city", user.getAddress().getCity())
+					.append("zipCode", user.getAddress().getZipCode())
+					.append("city", user.getAddress().getCity())
 					.append("country", user.getAddress().getCountry());
 
 			Document document = new Document();
@@ -73,6 +87,8 @@ public class UserService {
 			userCollection.insertOne(document);
 		}
 
+		watch.stop();
+		System.out.println("registerUser | Time Elapsed: " + watch.getTime());
 		return invalidatorMessage;
 
 	}
@@ -85,6 +101,8 @@ public class UserService {
 	 * @return
 	 */
 	public static String getUser(String id) {
+		StopWatch watch = new StopWatch();
+		watch.start();
 
 		String userToReturn = "";
 		MongoCollection<Document> userCollection = getUserCollection();
@@ -92,14 +110,12 @@ public class UserService {
 		try {
 			ObjectId objectId = new ObjectId(id);
 
-			Bson bsonFilter = Filters.eq("_id", objectId);
-			FindIterable<Document> findUser = userCollection.find(bsonFilter);
+			FindIterable<Document> findUser = userCollection.find(Filters.eq("_id", objectId));
 			ArrayList<Document> docs = new ArrayList<Document>();
 
 			findUser.into(docs);
 
 			for (Document doc : docs) {
-
 				userToReturn = doc.toJson();
 			}
 
@@ -109,6 +125,8 @@ public class UserService {
 			e.getMessage();
 		}
 
+		watch.stop();
+		System.out.println("getUser | Time Elapsed: " + watch.getTime());
 		return userToReturn;
 
 	}

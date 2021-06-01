@@ -1,6 +1,7 @@
 package com.atos.offer.model;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -59,7 +60,7 @@ public class User {
 		this.age = age;
 	}
 
-	@Pattern(regexp = "^[\\w\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "The mail format is not valid")
+	@Email(message = "The mail format is not valid")
 	public String getEmail() {
 		return email;
 	}
@@ -85,6 +86,12 @@ public class User {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	@Override
+	public String toString() {
+		return "User [firstName=" + firstName + ", lastName=" + lastName + ", age=" + age + ", email=" + email
+				+ ", phoneNumber=" + phoneNumber + ", address=" + address + "]";
 	}
 
 }
